@@ -22,7 +22,7 @@ infodir = $(datarootdir)/info
 INSTALL = mkdir -p $(DESTDIR)$(bindir)/ && ln -sf
 # INSTALL = install -D
 
-subs = new new-large port start restart passwd
+subs = list new start restart passwd discard
 
 .PHONY: install
 install: lab $(subs)
