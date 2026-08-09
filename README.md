@@ -81,7 +81,7 @@ Each new container gets a dedicated read-only key mount at
 host account's SSH access:
 
 ```bash
-lab key <jupyter-port> ~/.ssh/student-a.pub
+lab key <jupyter-port> ~/.ssh/user-a.pub
 ```
 
 It also accepts standard input, so a local public key can be sent without
@@ -94,22 +94,22 @@ ssh gxmzu-gpu-01 'lab key 58682 -' < ~/.ssh/id_ed25519.pub
 The command is idempotent and prints the SSH port. Use `ssh_keys_dir` only when
 you need to override the per-container directory.
 
-### Student identities without host accounts
+### Container users without host accounts
 
-Student accounts can be created only inside their containers. Set the identity
-and host data paths in a local `env` file before running `lab` or `lab new`:
+Users can be created only inside their containers. Set the identity and host
+data paths in a local `env` file before running `lab` or `lab new`:
 
 ```bash
-container_user="student_a"
+container_user="user_a"
 container_uid=20001
 container_group="users"
 container_gid=100
-container_home="/data/lab-students/student_a"
-jupyter_dir="/data/lab-students/student_a/.jupyter"
+container_home="/data/lab-users/user_a"
+jupyter_dir="/data/lab-users/user_a/.jupyter"
 ```
 
-The image entrypoint creates `student_a` with UID `20001` inside the container;
-no `student_a` entry is added to the host's `/etc/passwd` or `/etc/group`.
+The image entrypoint creates `user_a` with UID `20001` inside the container;
+no `user_a` entry is added to the host's `/etc/passwd` or `/etc/group`.
 The host only needs to provide the mounted directories. For shared storage,
 prepare the directory with the host's existing group permissions, for example
 `root:users` and mode `2770`.

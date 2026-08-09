@@ -19,7 +19,7 @@ ssh_port_offset=1
 ssh_keys_root="$HOME/.lab-ssh-keys"
 ssh_keys_dir=""
 # Override these per-container in a local ./env file when the host has no
-# corresponding student account.
+# corresponding host account.
 container_user=""
 container_uid=""
 container_group=""
