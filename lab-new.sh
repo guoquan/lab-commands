@@ -11,6 +11,7 @@ new() {
     local image=${image:-${DEFAULT_IMAGE}}
     local opts=${opts}
     local port=${port:-$(new_port)}
+    local ssh_port=$((port + ssh_port_offset))
     local name=$(user_container $port)
     local group=${group:-$(id -gn)}
     local gid=$(cut -d: -f3 < <(getent group $group))
@@ -55,6 +56,8 @@ new() {
         -e JUPYTER_ENABLE_LAB=yes \
         -e RESTARTABLE=yes \
         -e GRANT_SUDO=yes \
+        -e LAB_SSH_ENABLED="$ssh_enabled" \
+        -e LAB_SSH_PORT="$ssh_port" \
         --user root \
         $restart_opts \
         $network_opts \
@@ -66,6 +69,7 @@ new() {
 
     echo "Container ID: $id"
     info $id long
+    echo "Jupyter port: $port; SSH port: $ssh_port"
     echo "For a first run, please set your password \"lab passwd\" and restart \"lab restart $port\"."
 }
 

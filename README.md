@@ -55,12 +55,18 @@ restart_opts="--restart always"
 workdir_opts="-w /home"
 cap_opts="--cap-add sys_admin --cap-add dac_read_search"
 security_opts="--security-opt apparmor:unconfined"
+ssh_enabled="yes"                            # set no to disable container SSH
+ssh_port_offset=1                              # SSH port = Jupyter port + offset
 ```
 
 These variables are expanded as Docker command-line options. Keep each option and
 its value space-separated, and quote values that contain spaces when writing a
 custom wrapper. The `opts` variable remains available for mounts and other
 site-specific Docker options.
+
+When enabled, each `lab new` container starts `sshd` on its own host-network
+port. The command prints both the Jupyter and SSH ports. SSH password login is
+disabled; place an authorized public key in the user's `.ssh/authorized_keys`.
 
 Noted that we have use the host network by default so one should not need to setup port mapping.
 

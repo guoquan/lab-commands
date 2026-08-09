@@ -12,5 +12,8 @@ restart_opts="--restart always"
 workdir_opts="-w /home"
 cap_opts="--cap-add sys_admin --cap-add dac_read_search"
 security_opts="--security-opt apparmor:unconfined"
+# expose SSH on a per-container port next to the Jupyter port
+ssh_enabled="yes"
+ssh_port_offset=1
 # default image for new command
 DEFAULT_IMAGE="quay.io/deepq/minimal-notebook:latest"
