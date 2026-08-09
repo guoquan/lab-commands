@@ -12,6 +12,10 @@ new() {
     local opts=${opts}
     local port=${port:-$(new_port)}
     local ssh_port=$((port + ssh_port_offset))
+    local ssh_keys_mount_opts=()
+    if [[ -n ${ssh_keys_dir:-} ]]; then
+        ssh_keys_mount_opts=(-v "$ssh_keys_dir":/home/"$USER"/.ssh:ro)
+    fi
     local name=$(user_container $port)
     local group=${group:-$(id -gn)}
     local gid=$(cut -d: -f3 < <(getent group $group))
@@ -47,6 +51,7 @@ new() {
         $gpu_opts \
         -v "$home":/home/"$USER" \
         -v "$HOME"/.jupyter:/home/"$USER"/.jupyter \
+        "${ssh_keys_mount_opts[@]}" \
         ${ghome:+-v "$ghome":/home/"$group"} \
         $workdir_opts \
         -e NB_USER="$USER" \
