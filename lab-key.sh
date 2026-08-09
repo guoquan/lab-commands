@@ -34,7 +34,10 @@ key() {
         return 1
     fi
 
-    local destination="/home/$USER/.ssh"
+    local container_user=${container_user:-$($docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' "$name" | sed -n 's/^NB_USER=//p' | head -n1)}
+    container_user=${container_user:-$USER}
+
+    local destination="/home/$container_user/.ssh"
     local key_dir=$($docker inspect --format="{{range .Mounts}}{{if eq .Destination \"$destination\"}}{{.Source}}{{end}}{{end}}" "$name")
     if [[ -z $key_dir ]]; then
         echo "container has no dedicated SSH key mount: $name" >&2

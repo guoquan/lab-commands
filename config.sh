@@ -18,5 +18,14 @@ ssh_port_offset=1
 # optional override; by default each container gets $HOME/.lab-ssh-keys/<port>
 ssh_keys_root="$HOME/.lab-ssh-keys"
 ssh_keys_dir=""
+# Override these per-container in a local ./env file when the host has no
+# corresponding student account.
+container_user=""
+container_uid=""
+container_group=""
+container_gid=""
+container_home=""
+jupyter_dir=""
+container_group_home=""
 # default image for new command
 DEFAULT_IMAGE="quay.io/deepq/minimal-notebook:latest"

@@ -59,6 +59,13 @@ ssh_enabled="yes"                            # set no to disable container SSH
 ssh_port_offset=1                              # SSH port = Jupyter port + offset
 ssh_keys_root="$HOME/.lab-ssh-keys"           # per-container key directories
 ssh_keys_dir=""                               # optional single-container override
+container_user=""                            # user created inside the container
+container_uid=""                             # container-only numeric UID
+container_group=""                           # group created/used inside the container
+container_gid=""                             # container-only numeric GID
+container_home=""                            # host directory mounted as the container home
+jupyter_dir=""                               # host directory mounted as .jupyter
+container_group_home=""                      # optional host directory for /home/<group>
 ```
 
 These variables are expanded as Docker command-line options. Keep each option and
@@ -86,6 +93,29 @@ ssh gxmzu-gpu-01 'lab key 58682 -' < ~/.ssh/id_ed25519.pub
 
 The command is idempotent and prints the SSH port. Use `ssh_keys_dir` only when
 you need to override the per-container directory.
+
+### Student identities without host accounts
+
+Student accounts can be created only inside their containers. Set the identity
+and host data paths in a local `env` file before running `lab` or `lab new`:
+
+```bash
+container_user="student_a"
+container_uid=20001
+container_group="users"
+container_gid=100
+container_home="/data/lab-students/student_a"
+jupyter_dir="/data/lab-students/student_a/.jupyter"
+```
+
+The image entrypoint creates `student_a` with UID `20001` inside the container;
+no `student_a` entry is added to the host's `/etc/passwd` or `/etc/group`.
+The host only needs to provide the mounted directories. For shared storage,
+prepare the directory with the host's existing group permissions, for example
+`root:users` and mode `2770`.
+
+The same `env` values are used by `lab passwd`, so password initialization also
+targets the container-only account and its mounted Jupyter configuration.
 
 Noted that we have use the host network by default so one should not need to setup port mapping.
 

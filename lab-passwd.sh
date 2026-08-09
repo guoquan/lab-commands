@@ -8,20 +8,24 @@ init() {
 }; init
 
 passwd() {
-    if [ ! -e ~/.jupyter ]; then
-        mkdir -p ~/.jupyter
-    fi
-
     local group=${group:-$(id -gn)}
     local gid=$(cut -d: -f3 < <(getent group $group))
+    local container_user=${container_user:-$USER}
+    local container_uid=${container_uid:-$UID}
+    local container_group=${container_group:-$group}
+    local container_gid=${container_gid:-$gid}
+    local container_home=${container_home:-$PWD}
+    local jupyter_dir=${jupyter_dir:-$HOME/.jupyter}
+    mkdir -p "$jupyter_dir"
 
     $docker run -it --rm \
-        -v "$HOME":/home/"$USER" \
-        -w /home/"$NB_USER" \
-        -e NB_USER="$USER" \
-        -e NB_UID="$UID" \
-        -e NB_GROUP="$group" \
-        -e NB_GID="$gid" \
+        -v "$container_home":/home/"$container_user" \
+        -v "$jupyter_dir":/home/"$container_user"/.jupyter \
+        -w /home/"$container_user" \
+        -e NB_USER="$container_user" \
+        -e NB_UID="$container_uid" \
+        -e NB_GROUP="$container_group" \
+        -e NB_GID="$container_gid" \
         -e GRANT_SUDO=yes \
         --user root \
         $DEFAULT_IMAGE \
@@ -31,4 +35,3 @@ passwd() {
 if [[ $0 == "$BASH_SOURCE" ]]; then
     passwd $@
 fi
-
