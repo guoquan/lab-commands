@@ -43,11 +43,11 @@ new() {
     done
 
     local id=$($docker run -d --name "$name" \
-        --gpus all \
+        $gpu_opts \
         -v "$home":/home/"$USER" \
         -v "$HOME"/.jupyter:/home/"$USER"/.jupyter \
         ${ghome:+-v "$ghome":/home/"$group"} \
-        -w /home \
+        $workdir_opts \
         -e NB_USER="$USER" \
         -e NB_UID="$UID" \
         -e NB_GROUP="$group" \
@@ -56,11 +56,10 @@ new() {
         -e RESTARTABLE=yes \
         -e GRANT_SUDO=yes \
         --user root \
-        --restart always \
-        --network host \
-        --cap-add sys_admin \
-        --cap-add dac_read_search \
-        --security-opt apparmor:unconfined \
+        $restart_opts \
+        $network_opts \
+        $cap_opts \
+        $security_opts \
         $opts \
         $image \
         start-notebook.sh --port $port)

@@ -45,6 +45,23 @@ If one use any alternative container technology, override `docker` variable may 
 
 Additionally docker options can be added to `opts` to, for example, enable default volumn mapping or aquire additional privilege.
 
+The options used by `lab new` can also be changed in `config.sh` while keeping the
+existing defaults:
+
+```bash
+gpu_opts="--gpus all"                         # empty for CPU-only containers
+network_opts="--network host"                 # or a normal Docker network
+restart_opts="--restart always"
+workdir_opts="-w /home"
+cap_opts="--cap-add sys_admin --cap-add dac_read_search"
+security_opts="--security-opt apparmor:unconfined"
+```
+
+These variables are expanded as Docker command-line options. Keep each option and
+its value space-separated, and quote values that contain spaces when writing a
+custom wrapper. The `opts` variable remains available for mounts and other
+site-specific Docker options.
+
 Noted that we have use the host network by default so one should not need to setup port mapping.
 
 ## Install
