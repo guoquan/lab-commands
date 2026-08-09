@@ -7,7 +7,7 @@ init() {
     source $BASE/_init.sh
 }; init
 
-import-labs list new start restart passwd discard
+import-labs list new start restart passwd discard key
 
 welcome() {
     if [[ $($docker ps -q -a --filter name=$(user_container)) ]]; then
@@ -32,7 +32,7 @@ lab() {
             ;;
         * )
             echo usage: $0 [sub-command] [args]
-            echo sub-commands: list, new, passwd, start, restart, discard
+            echo sub-commands: list, new, start, restart, passwd, discard, key
     esac
 }
 

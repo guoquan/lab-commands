@@ -22,7 +22,7 @@ infodir = $(datarootdir)/info
 INSTALL = mkdir -p $(DESTDIR)$(bindir)/ && ln -sf
 # INSTALL = install -D
 
-subs = list new start restart passwd discard
+subs = list new start restart passwd discard key
 
 .PHONY: install
 install: lab $(subs)

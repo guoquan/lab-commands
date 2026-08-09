@@ -12,10 +12,13 @@ new() {
     local opts=${opts}
     local port=${port:-$(new_port)}
     local ssh_port=$((port + ssh_port_offset))
+    local ssh_keys_dir_effective=${ssh_keys_dir:-$ssh_keys_root/$port}
     local ssh_keys_mount_opts=()
-    if [[ -n ${ssh_keys_dir:-} ]]; then
-        ssh_keys_mount_opts=(-v "$ssh_keys_dir":/home/"$USER"/.ssh:ro)
-    fi
+    mkdir -p "$ssh_keys_dir_effective"
+    touch "$ssh_keys_dir_effective/authorized_keys"
+    chmod 700 "$ssh_keys_dir_effective"
+    chmod 600 "$ssh_keys_dir_effective/authorized_keys"
+    ssh_keys_mount_opts=(-v "$ssh_keys_dir_effective":/home/"$USER"/.ssh:ro)
     local name=$(user_container $port)
     local group=${group:-$(id -gn)}
     local gid=$(cut -d: -f3 < <(getent group $group))

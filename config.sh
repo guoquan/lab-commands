@@ -15,7 +15,8 @@ security_opts="--security-opt apparmor:unconfined"
 # expose SSH on a per-container port next to the Jupyter port
 ssh_enabled="yes"
 ssh_port_offset=1
-# optional per-container authorized_keys directory; keep empty to use $HOME/.ssh
+# optional override; by default each container gets $HOME/.lab-ssh-keys/<port>
+ssh_keys_root="$HOME/.lab-ssh-keys"
 ssh_keys_dir=""
 # default image for new command
 DEFAULT_IMAGE="quay.io/deepq/minimal-notebook:latest"

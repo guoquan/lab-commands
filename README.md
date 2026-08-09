@@ -57,7 +57,8 @@ cap_opts="--cap-add sys_admin --cap-add dac_read_search"
 security_opts="--security-opt apparmor:unconfined"
 ssh_enabled="yes"                            # set no to disable container SSH
 ssh_port_offset=1                              # SSH port = Jupyter port + offset
-ssh_keys_dir=""                               # optional dedicated authorized_keys directory
+ssh_keys_root="$HOME/.lab-ssh-keys"           # per-container key directories
+ssh_keys_dir=""                               # optional single-container override
 ```
 
 These variables are expanded as Docker command-line options. Keep each option and
@@ -68,9 +69,16 @@ site-specific Docker options.
 When enabled, each `lab new` container starts `sshd` on its own host-network
 port. The command prints both the Jupyter and SSH ports. SSH password login is
 disabled; place an authorized public key in the user's `.ssh/authorized_keys`.
-For student containers, set `ssh_keys_dir` to a dedicated host directory so
-student keys do not become host SSH keys. The directory must contain only the
-intended `authorized_keys` file and is mounted read-only.
+Each new container gets a dedicated read-only key mount at
+`$HOME/.lab-ssh-keys/<jupyter-port>`. Add a public key without touching the
+host account's SSH access:
+
+```bash
+lab key <jupyter-port> ~/.ssh/student-a.pub
+```
+
+The command is idempotent and prints the SSH port. Use `ssh_keys_dir` only when
+you need to override the per-container directory.
 
 Noted that we have use the host network by default so one should not need to setup port mapping.
 
@@ -86,4 +94,4 @@ Now, try `lab list` to see if it works.
 
 ## Usage
 
-Use `lab` to get started, and there are sub commands `lab list`, `lab new`, `lab start`, `lab restart`, `lab passwd`, and `lab discard`.
+Use `lab` to get started, and there are sub commands `lab list`, `lab new`, `lab start`, `lab restart`, `lab passwd`, `lab discard`, and `lab key`.
