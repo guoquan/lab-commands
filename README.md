@@ -77,6 +77,13 @@ host account's SSH access:
 lab key <jupyter-port> ~/.ssh/student-a.pub
 ```
 
+It also accepts standard input, so a local public key can be sent without
+creating a temporary file on the server:
+
+```bash
+ssh gxmzu-gpu-01 'lab key 58682 -' < ~/.ssh/id_ed25519.pub
+```
+
 The command is idempotent and prints the SSH port. Use `ssh_keys_dir` only when
 you need to override the per-container directory.
 

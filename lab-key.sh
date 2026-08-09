@@ -15,14 +15,22 @@ key() {
         echo "usage: lab key <jupyter-port> <public-key-file>" >&2
         return 2
     fi
+    local temporary_key=""
+    if [[ $public_key == - ]]; then
+        temporary_key=$(mktemp)
+        cat > "$temporary_key"
+        public_key=$temporary_key
+    fi
     if [[ ! -f $public_key ]]; then
         echo "public key file not found: $public_key" >&2
+        [[ -z $temporary_key ]] || rm -f "$temporary_key"
         return 2
     fi
 
     local name=$(user_container "$port")
     if ! $docker inspect "$name" >/dev/null 2>&1; then
         echo "container not found: $name" >&2
+        [[ -z $temporary_key ]] || rm -f "$temporary_key"
         return 1
     fi
 
@@ -30,6 +38,7 @@ key() {
     local key_dir=$($docker inspect --format="{{range .Mounts}}{{if eq .Destination \"$destination\"}}{{.Source}}{{end}}{{end}}" "$name")
     if [[ -z $key_dir ]]; then
         echo "container has no dedicated SSH key mount: $name" >&2
+        [[ -z $temporary_key ]] || rm -f "$temporary_key"
         return 1
     fi
 
@@ -42,6 +51,7 @@ key() {
         [[ -z $line || $line == \#* ]] && continue
         grep -Fqx -- "$line" "$key_dir/authorized_keys" || printf '%s\n' "$line" >> "$key_dir/authorized_keys"
     done < "$public_key"
+    [[ -z $temporary_key ]] || rm -f "$temporary_key"
     echo "Added public key to $name ($key_dir)."
     echo "SSH port: $((port + ssh_port_offset))"
 }
