@@ -26,7 +26,7 @@ lab() {
         "" )
             welcome
             ;;
-        "list" | "new" | "start" | "restart" | "passwd" | "discard" )
+        "list" | "new" | "start" | "restart" | "passwd" | "discard" | "key" )
             shift
             $subcommand $@
             ;;
