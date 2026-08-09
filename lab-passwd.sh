@@ -14,7 +14,7 @@ passwd() {
     local container_uid=${container_uid:-$UID}
     local container_group=${container_group:-$group}
     local container_gid=${container_gid:-$gid}
-    local container_home=${container_home:-$PWD}
+    local container_home=${container_home:-$HOME}
     local jupyter_dir=${jupyter_dir:-$HOME/.jupyter}
     mkdir -p "$jupyter_dir"
 
