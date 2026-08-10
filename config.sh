@@ -5,7 +5,7 @@ group=deepq
 # default docker run options
 opts="-v /data/lab-students/public:/home/public"
 # options for GPU access; set empty for CPU-only containers
-gpu_opts="--gpus all"
+gpu_opts=""
 # network, restart, working-directory, and privilege options
 network_opts="--network host"
 restart_opts="--restart always"
