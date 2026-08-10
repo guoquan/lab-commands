@@ -24,9 +24,6 @@ new() {
     local container_home=${container_home:-$home}
     local jupyter_dir=${jupyter_dir:-$HOME/.jupyter}
     local container_group_home=${container_group_home:-$ghome}
-    local user_id=${user_id:-$container_user}
-    local instance_id=${instance_id:-$name}
-    local easytier_ip=${easytier_ip:-}
     local ssh_keys_dir_effective=${ssh_keys_dir:-$ssh_keys_root/$port}
     local ssh_keys_mount_opts=()
     mkdir -p "$ssh_keys_dir_effective"
@@ -77,13 +74,6 @@ new() {
         -e LAB_SSH_ENABLED="$ssh_enabled" \
         -e LAB_SSH_PORT="$ssh_port" \
         --user root \
-        --label lab.managed=true \
-        --label lab.user_id="$user_id" \
-        --label lab.instance_id="$instance_id" \
-        --label lab.host="$(hostname -s)" \
-        --label lab.easytier_ip="$easytier_ip" \
-        --label lab.jupyter_port="$port" \
-        --label lab.ssh_port="$ssh_port" \
         $restart_opts \
         $network_opts \
         $cap_opts \

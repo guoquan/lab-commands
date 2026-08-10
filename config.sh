@@ -18,10 +18,6 @@ ssh_port_offset=1
 # optional override; by default each container gets $HOME/.lab-ssh-keys/<port>
 ssh_keys_root="$HOME/.lab-ssh-keys"
 ssh_keys_dir=""
-# Optional registry labels, normally set in a per-instance ./env file.
-user_id=""
-instance_id=""
-easytier_ip=""
 # Override these per-container in a local ./env file when the host has no
 # corresponding host account.
 container_user=""
