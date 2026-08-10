@@ -3,7 +3,7 @@ docker=docker
 # default group
 group=deepq
 # default docker run options
-opts="-v /storage:/storage -v /storage:/home/storage"
+opts="-v /data/lab-students/public:/home/public"
 # options for GPU access; set empty for CPU-only containers
 gpu_opts="--gpus all"
 # network, restart, working-directory, and privilege options
@@ -18,6 +18,10 @@ ssh_port_offset=1
 # optional override; by default each container gets $HOME/.lab-ssh-keys/<port>
 ssh_keys_root="$HOME/.lab-ssh-keys"
 ssh_keys_dir=""
+# Optional registry labels, normally set in a per-instance ./env file.
+user_id=""
+instance_id=""
+easytier_ip=""
 # Override these per-container in a local ./env file when the host has no
 # corresponding host account.
 container_user=""

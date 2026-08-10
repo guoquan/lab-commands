@@ -66,6 +66,9 @@ container_gid=""                             # container-only numeric GID
 container_home=""                            # host directory mounted as the container home
 jupyter_dir=""                               # host directory mounted as .jupyter
 container_group_home=""                      # optional host directory for /home/<group>
+user_id=""                                   # stable registry identity
+instance_id=""                               # stable registry container identity
+easytier_ip=""                               # EasyTier address of the host node
 ```
 
 These variables are expanded as Docker command-line options. Keep each option and
@@ -116,6 +119,11 @@ prepare the directory with the host's existing group permissions, for example
 
 The same `env` values are used by `lab passwd`, so password initialization also
 targets the container-only account and its mounted Jupyter configuration.
+
+`lab new` writes these identity values as Docker labels (`lab.user_id`,
+`lab.instance_id`, `lab.host`, and `lab.easytier_ip`). A separate registry
+snapshot tool can read the labels, ports, image, and mounts without changing the
+container or requiring a host user account.
 
 Noted that we have use the host network by default so one should not need to setup port mapping.
 
