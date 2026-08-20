@@ -11,11 +11,26 @@ new() {
     local image=${image:-${DEFAULT_IMAGE}}
     local opts=${opts}
     local port=${port:-$(new_port)}
+    local ssh_port=$((port + ssh_port_offset))
     local name=$(user_container $port)
     local group=${group:-$(id -gn)}
     local gid=$(cut -d: -f3 < <(getent group $group))
     local ghome=$(getent passwd -- ${group} | cut -d: -f6)
     local home=$(pwd)
+    local container_user=${container_user:-$USER}
+    local container_uid=${container_uid:-$UID}
+    local container_group=${container_group:-$group}
+    local container_gid=${container_gid:-$gid}
+    local container_home=${container_home:-$home}
+    local jupyter_dir=${jupyter_dir:-$HOME/.jupyter}
+    local container_group_home=${container_group_home:-$ghome}
+    local ssh_keys_dir_effective=${ssh_keys_dir:-$ssh_keys_root/$port}
+    local ssh_keys_mount_opts=()
+    mkdir -p "$ssh_keys_dir_effective"
+    touch "$ssh_keys_dir_effective/authorized_keys"
+    chmod 700 "$ssh_keys_dir_effective"
+    chmod 600 "$ssh_keys_dir_effective/authorized_keys"
+    ssh_keys_mount_opts=(-v "$ssh_keys_dir_effective":/home/"$container_user"/.ssh:ro)
 
     while [ "$home" != "$HOME" ]; do
         echo
@@ -43,30 +58,34 @@ new() {
     done
 
     local id=$($docker run -d --name "$name" \
-        --gpus all \
-        -v "$home":/home/"$USER" \
-        -v "$HOME"/.jupyter:/home/"$USER"/.jupyter \
-        ${ghome:+-v "$ghome":/home/"$group"} \
-        -w /home \
-        -e NB_USER="$USER" \
-        -e NB_UID="$UID" \
-        -e NB_GROUP="$group" \
-        -e NB_GID="$gid" \
+        $gpu_opts \
+        -v "$container_home":/home/"$container_user" \
+        -v "$jupyter_dir":/home/"$container_user"/.jupyter \
+        "${ssh_keys_mount_opts[@]}" \
+        ${container_group_home:+-v "$container_group_home":/home/"$container_group"} \
+        $workdir_opts \
+        -e NB_USER="$container_user" \
+        -e NB_UID="$container_uid" \
+        -e NB_GROUP="$container_group" \
+        -e NB_GID="$container_gid" \
         -e JUPYTER_ENABLE_LAB=yes \
         -e RESTARTABLE=yes \
         -e GRANT_SUDO=yes \
+        -e LAB_SSH_ENABLED="$ssh_enabled" \
+        -e LAB_SSH_PORT="$ssh_port" \
         --user root \
-        --restart always \
-        --network host \
-        --cap-add sys_admin \
-        --cap-add dac_read_search \
-        --security-opt apparmor:unconfined \
+        $restart_opts \
+        $network_opts \
+        $cap_opts \
+        $security_opts \
         $opts \
         $image \
         start-notebook.sh --port $port)
 
     echo "Container ID: $id"
     info $id long
+    echo "Container user: $container_user (uid=$container_uid, gid=$container_gid)"
+    echo "Jupyter port: $port; SSH port: $ssh_port"
     echo "For a first run, please set your password \"lab passwd\" and restart \"lab restart $port\"."
 }
 
