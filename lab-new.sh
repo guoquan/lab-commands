@@ -59,6 +59,7 @@ new() {
 
     local id=$($docker run -d --name "$name" \
         $gpu_opts \
+        $shm_opts \
         -v "$container_home":/home/"$container_user" \
         -v "$jupyter_dir":/home/"$container_user"/.jupyter \
         "${ssh_keys_mount_opts[@]}" \

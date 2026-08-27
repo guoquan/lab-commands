@@ -50,6 +50,7 @@ existing defaults:
 
 ```bash
 gpu_opts="--gpus all"                         # empty for CPU-only containers
+shm_opts="--shm-size=2g"                      # increase /dev/shm for data-loader workers
 network_opts="--network host"                 # or a normal Docker network
 restart_opts="--restart always"
 workdir_opts="-w /home"
@@ -75,6 +76,11 @@ These variables are expanded as Docker command-line options. Keep each option an
 its value space-separated, and quote values that contain spaces when writing a
 custom wrapper. The `opts` variable remains available for mounts and other
 site-specific Docker options.
+
+Docker defaults `/dev/shm` to 64 MiB. Set `shm_opts="--shm-size=2g"` for
+workloads that use PyTorch or similar multi-worker data loaders. This only
+affects containers created after the setting is applied; Docker cannot resize
+the shared-memory mount of an existing container.
 
 When enabled, each `lab new` container starts `sshd` on its own host-network
 port. The command prints both the Jupyter and SSH ports. SSH password login is

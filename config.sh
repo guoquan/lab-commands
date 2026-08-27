@@ -6,6 +6,8 @@ group=deepq
 opts="-v /data/lab-students/public:/home/public"
 # options for GPU access; set empty for CPU-only containers
 gpu_opts=""
+# shared-memory size, for example "--shm-size=2g" for multi-worker data loaders
+shm_opts=""
 # network, restart, working-directory, and privilege options
 network_opts="--network host"
 restart_opts="--restart always"
